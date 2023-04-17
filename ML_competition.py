@@ -46,8 +46,8 @@ del emg_features['simple square integral'] # Remove the 'simple square integral'
 emg_feature_descriptors = MultipleFeatureDescriptors(
     functions=seglearn_feature_dict_wrapper(emg_features),
     series_names=['AccV', 'AccML', 'AccAP'], # Define the series names for each axis
-    windows=[5_000], # Define the window size for feature extraction
-    strides=[5_000], # Define the stride size for feature extraction
+    windows=[5_000], 
+    strides=[5_000],
 )
 feature_collection = FeatureCollection([accelerometer_features, emg_feature_descriptors])
 
