@@ -33,29 +33,24 @@ complex_featlist=['Visit','Test','Medication','s_Visit','s_Age','s_YearsSinceDx'
 metadata_complex=metadata.merge(subjects,how='left',on='Subject').copy()
 metadata_complex['Medication']=metadata_complex['Medication'].factorize()[0]
 from seglearn.feature_functions import base_features, emg_features
-
 from tsflex.features import FeatureCollection, MultipleFeatureDescriptors
 from tsflex.features.integrations import seglearn_feature_dict_wrapper
-
-
-basic_feats = MultipleFeatureDescriptors(
+accelerometer_features = MultipleFeatureDescriptors(
     functions=seglearn_feature_dict_wrapper(base_features()),
-    series_names=['AccV', 'AccML', 'AccAP'],
-    windows=[5_000],
-    strides=[5_000],
+    series_names=['AccV', 'AccML', 'AccAP'], # Define the series names for each axis
+    windows=[5_000], # Define the window size for feature extraction
+    strides=[5_000], # Define the stride size for feature extraction
 )
-
-emg_feats = emg_features()
-del emg_feats['simple square integral'] # is same as abs_energy (which is in base_features)
-
-emg_feats = MultipleFeatureDescriptors(
-    functions=seglearn_feature_dict_wrapper(emg_feats),
-    series_names=['AccV', 'AccML', 'AccAP'],
-    windows=[5_000],
-    strides=[5_000],
+emg_features = emg_features()
+del emg_features['simple square integral'] # Remove the 'simple square integral' feature, which is redundant
+emg_feature_descriptors = MultipleFeatureDescriptors(
+    functions=seglearn_feature_dict_wrapper(emg_features),
+    series_names=['AccV', 'AccML', 'AccAP'], # Define the series names for each axis
+    windows=[5_000], # Define the window size for feature extraction
+    strides=[5_000], # Define the stride size for feature extraction
 )
+feature_collection = FeatureCollection([accelerometer_features, emg_feature_descriptors])
 
-fc = FeatureCollection([basic_feats, emg_feats])
 import pathlib
 def reader(f):
     try:
