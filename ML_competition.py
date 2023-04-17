@@ -42,10 +42,10 @@ accelerometer_features = MultipleFeatureDescriptors(
     strides=[5_000], # Define the stride size for feature extraction
 )
 emg_features = emg_features()
-del emg_features['simple square integral'] # Remove the 'simple square integral' feature, which is redundant
+del emg_features['simple square integral']
 emg_feature_descriptors = MultipleFeatureDescriptors(
     functions=seglearn_feature_dict_wrapper(emg_features),
-    series_names=['AccV', 'AccML', 'AccAP'], # Define the series names for each axis
+    series_names=['AccV', 'AccML', 'AccAP'],
     windows=[5_000], 
     strides=[5_000],
 )
@@ -146,7 +146,7 @@ for f in test:
     df.set_index('Time', drop=True, inplace=True)
 
     df['Id'] = f.split('/')[-1].split('.')[0]
-    df['Time_frac']=(df.index/df.index.max()).values#currently the index of data is actually "Time"
+    df['Time_frac']=(df.index/df.index.max()).values
     df = pd.merge(df, tasks[['Id','t_kmeans']], how='left', on='Id').fillna(-1)
     df = pd.merge(df, metadata_complex[['Id','Subject']+['Visit','Test','Medication','s_kmeans']], how='left', on='Id').fillna(-1)
     df_feats = fc.calculate(df, return_df=True, include_final_window=True, approve_sparsity=True, window_idx="begin")
